@@ -1,6 +1,6 @@
 # CAPS - The Code Academy Parcel Service
 
-CAPS is an event-driven application that emulates a real-world supply chain system. It simulates a delivery service where vendors can ship products using the CAPS delivery service. When the drivers deliver the packages, each vendor is notified that their customers received what they purchased. The application is written in Node.js and follows an event-driven architecture.
+CAPS is an event-driven application that emulates a real-world supply chain system. It simulates a delivery service where vendors can ship products using the CAPS delivery service. When the drivers deliver the packages, each vendor is notified that their customers received what they purchased. The application is written in Node.js and follows an event-driven architecture, now utilizing the Socket.IO library for real-time communication (**updated**).
 
 ## Installation
 
@@ -8,15 +8,15 @@ CAPS is an event-driven application that emulates a real-world supply chain syst
 2. Navigate to the project directory: `cd caps`
 3. Install the dependencies: `npm install`
 
-## Usage
+## Usage (**updated**)
 
 1. Start the application: `npm start`
-2. The application will run and simulate the interaction between vendors and drivers.
+2. The application will run and simulate the interaction between vendors and drivers in real-time (**updated**).
 3. Check the console output to see the events and messages generated during the simulation.
 
 ## File Structure
 
-The project follows the following file structure:
+The project follows the following file structure (**updated**):
 
 ├── .github
 │ ├── workflows
@@ -32,8 +32,10 @@ The project follows the following file structure:
 ├── .eslintrc.json
 ├── .gitignore
 ├── eventPool.js
-├── hub.js
+<!-- ├── hub.js (**updated**) -->
+├── server.js (**added**)
 ├── package.json
+├── MessageQueue.js
 └── README.md
 
 - `.github/workflows/node.yml`: GitHub Actions workflow configuration for Node.js.
@@ -46,7 +48,8 @@ The project follows the following file structure:
 - `.eslintrc.json`: ESLint configuration file.
 - `.gitignore`: Specifies intentionally untracked files to ignore.
 - `eventPool.js`: Module for the Global Event Pool.
-- `hub.js`: Module for managing global package events.
+- `hub.js`: Module for managing global package events and communication via Socket.IO (**updated**).
+- `server.js`: Server entry point for the CAPS system, implementing Socket.IO (**added**).
 - `package.json`: Project configuration file.
 - `README.md`: This file.
 

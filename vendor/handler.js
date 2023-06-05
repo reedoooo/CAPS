@@ -1,42 +1,49 @@
 'use strict';
-// Ensures the code will be executed in "strict mode", which helps catch common JavaScript pitfalls
 
+require('dotenv').config();
+const { io } = require('socket.io-client');
+const SERVER_URL = process.env.SERVER_URL || 'http://localhost:3001';
 const { eventEmitter, eventPool } = require('../eventPool');
-// Imports eventEmitter and eventPool from the eventPool module
-
 const Chance = require('chance');
-// Imports the Chance library, which generates random data
-
 const chance = new Chance();
-// Creates a new instance of Chance to generate random data
 
-const packageReadyForPickup = () => {
-  console.log('Vendor package ready for pickup');
-  // Logs a message indicating a package is ready for pickup
+const storeName = chance.company();
 
+const capsSocket = io(SERVER_URL + '/caps');
+
+const generatePackage = () => {
   return {
-    store: chance.company(),
-    // Creates a random company name for the store
+    store: storeName,
     orderId: chance.guid(),
-    // Creates a random Globally Unique Identifier (GUID) for the order ID
     customer: chance.name(),
-    // Creates a random name for the customer
     address: chance.address(),
-    // Creates a random address for the customer
   };
 };
-// Declares a function packageReadyForPickup which prepares a package for pickup
 
-const packageDeliveredAlert = (payload) => {
-  console.log(`Thank you for your order ${payload.customer}\n`, payload);
-  // Logs a message thanking the customer for their order, and prints out the payload
+const placeOrder = () => {
+  try {
+    let payload = generatePackage();
+
+    capsSocket.emit('join', payload);
+
+    console.log('Vendor package ready for pickup');
+
+    capsSocket.emit(eventPool[0], payload);
+  } catch (err) {
+    console.error('Error in placeOrder:', err);
+  }
 };
 
-// packageReadyForPickup(chance.company());
-// A commented out call to packageReadyForPickup, which you may uncomment for testing
+const packageDeliveredAlert = payload => {
+  console.log(
+    `Thank you ${payload.order.customer} for shopping with ${payload.clientId}`,
+  );
+  capsSocket.emit(eventPool[3], payload);
+};
 
 module.exports = {
-  packageReadyForPickup,
+  generatePackage,
+  placeOrder,
   packageDeliveredAlert,
+  capsSocket,
 };
-// Exports the functions packageReadyForPickup and packageDeliveredAlert for use in other modules

@@ -1,10 +1,35 @@
 'use strict';
 
 const { eventEmitter, eventPool } = require('../eventPool');
-const { packageReadyForPickup, packageDeliveredAlert } = require('./handler');
+const {
+  generatePackage,
+  placeOrder,
+  packageDeliveredAlert,
+  capsSocket,
+} = require('./handler');
 
-// on === addEventListener
+capsSocket.on('connect', () => {
+  console.log('Connected to the server');
+});
 
-eventEmitter.on(eventPool[2], packageDeliveredAlert);
+capsSocket.on('disconnect', () => {
+  console.log('Disconnected from the server');
+});
 
-eventEmitter.emit(eventPool[0], packageReadyForPickup());
+capsSocket.on('connect_error', err => {
+  console.log('Connection error', err);
+});
+
+// handles 'delivered' events
+capsSocket.on(eventPool[2], packageDeliveredAlert);
+
+// handles 'delivered-error' events
+capsSocket.on(`${eventPool[2]}-error`, payload => {
+  console.log(payload);
+});
+
+capsSocket.on(`join`, payload => {
+  console.log(`VENDOR JOINED ROOM`);
+});
+
+setInterval(placeOrder, 5000);
