@@ -1,33 +1,41 @@
-const {
-  packageReadyForPickup,
-  packageDeliveredAlert,
-} = require('../vendor/handler');
-const { eventPool } = require('../eventPool');
-let capsSocket;
+const VendorHandler = require('./path-to-vendor-handler');
 
-jest.mock('../vendor/index', () => ({
-  capsSocket: {
-    emit: jest.fn(),
-    on: jest.fn(),
-  },
-}));
+describe('Vendor Handler', () => {
+  it('should subscribe to delivered notifications', () => {
+    // Arrange
+    const vendorHandler = new VendorHandler();
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  capsSocket = require('../vendor/index').capsSocket;
-});
+    // Act
+    vendorHandler.subscribeToDelivered();
 
-it('should emit event with correct payload', () => {
-  const emitSpy = jest.spyOn(capsSocket, 'emit');
-  const payload = { orderId: '12345', store: 'Test Store' };
-  packageReadyForPickup(payload);
-  expect(emitSpy).toHaveBeenCalledWith('pickup', payload);
-});
+    // Assert
+    expect(vendorHandler.isSubscribedToDelivered).toBeTruthy();
+  });
 
-it('should listen for delivered event and call the packageDeliveredAlert function', () => {
-  const onSpy = jest.spyOn(capsSocket, 'on');
-  const payload = { orderId: '12345', store: 'Test Store' };
-  capsSocket.on(eventPool[1], packageDeliveredAlert);
-  capsSocket.emit(eventPool[1], payload); // Simulate an event emission
-  expect(onSpy).toHaveBeenCalledWith(eventPool[1], packageDeliveredAlert);
+  it('should catch up on delivered notifications', () => {
+    // Arrange
+    const vendorHandler = new VendorHandler();
+    vendorHandler.missedDeliveredNotifications = [
+      'notification1',
+      'notification2',
+    ];
+
+    // Act
+    const missedNotifications = vendorHandler.catchUpOnDeliveredNotifications();
+
+    // Assert
+    expect(missedNotifications.length).toBe(2);
+  });
+
+  it('should acknowledge a delivery', () => {
+    // Arrange
+    const vendorHandler = new VendorHandler();
+    const deliveryId = '123';
+
+    // Act
+    const result = vendorHandler.acknowledgeDelivery(deliveryId);
+
+    // Assert
+    expect(result).toBe('Acknowledged delivery 123');
+  });
 });
