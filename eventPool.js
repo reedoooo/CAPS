@@ -3,7 +3,7 @@
 const Events = require('events');
 const eventEmitter = new Events();
 
-const eventPool = ['pickup', 'transit', 'delivered'];
+const eventPool = ['pickup', 'transit', 'delivered', 'received', 'getAll'];
 
 module.exports = {
   eventPool,

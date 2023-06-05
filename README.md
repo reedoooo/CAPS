@@ -32,9 +32,10 @@ The project follows the following file structure (**updated**):
 ├── .eslintrc.json
 ├── .gitignore
 ├── eventPool.js
-├── hub.js (**updated**)
+<!-- ├── hub.js (**updated**) -->
 ├── server.js (**added**)
 ├── package.json
+├── MessageQueue.js
 └── README.md
 
 - `.github/workflows/node.yml`: GitHub Actions workflow configuration for Node.js.
